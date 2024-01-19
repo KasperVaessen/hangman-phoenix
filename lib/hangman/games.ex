@@ -21,6 +21,10 @@ defmodule Hangman.Games do
     Repo.all(Game)
   end
 
+  def list_unfinished_games do
+    Repo.all(from g in Game, where: g.finished == false)
+  end
+
   @doc """
   Gets a single game.
 

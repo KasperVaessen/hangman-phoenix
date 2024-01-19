@@ -24,6 +24,21 @@
 #input {
     margin: 20px;
 }
+#wrong_letters {
+    position: absolute;
+    top: 20%;
+    left: 100%;
+
+}
+.wrong_letter {
+    font-size: x-large;
+    display: inline;
+    color: red;
+}
+
+.wrong_letter:nth-of-type(1) {
+    top: 10%;
+}
 
 #part1 {
     width: 80%;

@@ -11,6 +11,11 @@ defmodule HangmanWeb.GameController do
     render(conn, :index, games: games)
   end
 
+  def unfinished_games(conn, _params) do
+    games = Games.list_unfinished_games()
+    render(conn, :index, games: games)
+  end
+
   def create(conn, %{"game" => game_params}) do
     with {:ok, %Game{} = game} <- Games.create_game(game_params) do
       conn
@@ -44,27 +49,24 @@ defmodule HangmanWeb.GameController do
       %{
         id: _,
         user: _,
-        finished: _,
+        finished: fin,
         correct_word: correct_word,
         guessed_letters: guessed_letters
       } = game
+
     if (not is_bitstring(guess)) or (not Regex.match?(~r/^[A-Za-z]$/, guess)) or Enum.member?(guessed_letters, guess) do
       send_resp(conn, 422, "invalid guess")
     else
-      guess = String.downcase(guess)
-      new_guessed = [guess|guessed_letters]
-      guessed_correctly = String.graphemes(correct_word) |> Enum.map(fn x -> if Enum.member?(new_guessed,x) do x else "." end end)
-      guessed_wrong = Enum.filter(new_guessed, fn x -> not String.contains?(correct_word, x) end)
-      correct = String.contains?(correct_word, guess)
-      finished = String.graphemes(correct_word) |> Enum.filter(fn x -> not Enum.member?(new_guessed,x) end) |> Enum.count == 0
-      response = %{
-        guessed_correctly: guessed_correctly,
-        guessed_wrong: guessed_wrong,
-        correct: correct,
-        finished: finished
-      }
-      with {:ok, %Game{} = _} <- Games.update_game(game, %{guessed_letters: new_guessed, finished: finished}) do
-        render(conn, :response, response: response)
+      if fin do
+        send_resp(conn, 422, "game already finished")
+      else
+        guess = String.downcase(guess)
+        new_guessed = [guess|guessed_letters]
+        finished = (String.graphemes(correct_word) |> Enum.filter(fn x -> not Enum.member?(guessed_letters,x) end) |> Enum.count == 0) or (guessed_letters |> Enum.count > 10)
+
+        with {:ok, %Game{} = new_game} <- Games.update_game(game, %{guessed_letters: new_guessed, finished: finished}) do
+          render(conn, :show, game: new_game)
+        end
       end
     end
   end

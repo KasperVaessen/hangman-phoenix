@@ -23,9 +23,9 @@ defmodule HangmanWeb.Router do
   scope "/api", HangmanWeb do
     pipe_through :api
 
-    resources "/games", GameController, except: [:new, :edit]
     post "/guess", GameController, :make_guess
     post "/create_game", GameController, :create_game
+    get "/unfinished_games", GameController, :unfinished_games
   end
 
   # Other scopes may use custom stacks.

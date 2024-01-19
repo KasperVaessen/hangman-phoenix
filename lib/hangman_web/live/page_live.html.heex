@@ -1,0 +1,68 @@
+<aside id="default-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+    <.form for={@form2} phx-submit="save2">
+        <button type="submit">Submit</button>
+      </.form>
+    
+    <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+       <ul class="space-y-2 font-medium">
+        <%= for game <- @games do %>
+          <li>
+             <a class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                <span class="ms-3">Game <%= game["id"] %></span>
+             </a>
+          </li>
+        <% end %>
+       </ul>
+    </div>
+</aside>
+
+<div id="galg">
+    <%= if length(@guessed_wrong) > 0 do %>
+        <div class="hang-part" id="part1"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 1 do %>
+    <div class="hang-part" id="part2"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 2 do %>
+    <div class="hang-part" id="part3"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 3 do %>
+    <div class="hang-part" id="part4"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 4 do %>
+    <div class="hang-part" id="part5"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 5 do %>
+    <div class="hang-part" id="part6"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 6 do %>
+    <div class="hang-part" id="part7"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 7 do %>
+    <div class="hang-part" id="part8"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 8 do %>
+    <div class="hang-part" id="part9"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 9 do %>
+    <div class="hang-part" id="part10"></div>
+    <% end %>
+    <%= if length(@guessed_wrong) > 10 do %>
+        <div class="hang-part" id="part11"></div>
+    <% end %>
+
+    <div id="wrong_letters">
+        <%= for item <- @guessed_wrong do %>
+            <div class="wrong_letter"> <%= item %> </div>
+        <% end %>
+    </div>
+
+    <%= for item <- @resp do %>
+      <div class="letter"> <%= item %> </div>
+    <% end %>
+
+    <.form for={@form} phx-submit="save">
+      <.input field={@form["guess"]} type="text" pattern="^[A-Za-z]$" />
+      <button type="submit">Submit</button>
+    </.form>
+</div>

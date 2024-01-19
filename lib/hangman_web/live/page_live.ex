@@ -1,43 +1,26 @@
 defmodule HangmanWeb.PageLive do
 
   use HangmanWeb, :live_view
-  def render(assigns) do
-    ~H"""
-      <div id="galg">
-      <div class="hang-part" id="part1"></div>
-      <div class="hang-part" id="part2"></div>
-      <div class="hang-part" id="part3"></div>
-      <div class="hang-part" id="part4"></div>
-      <div class="hang-part" id="part5"></div>
-      <div class="hang-part" id="part6"></div>
-      <div class="hang-part" id="part7"></div>
-      <div class="hang-part" id="part8"></div>
-      <div class="hang-part" id="part9"></div>
-      <div class="hang-part" id="part10"></div>
-      <div class="hang-part" id="part11"></div>
-
-      <%= for item <- @resp do %>
-        <div class="letter"> <%= item %> </div>
-      <% end %>
-
-      <.form for={@form} phx-submit="save">
-        <.input field={@form["guess"]} type="text" />
-        <button>Submit</button>
-      </.form>
-    </div>
-   """
-  end
 
   def mount(_params, _session, socket) do
-    url = "http://localhost:4000/api/create_game"
-    {:ok, resp} = Req.post(url)
-    %{"guessed_correctly" => lis, "id" => id} = resp.body
-    guess = %{
-      "guess" => ""
-    }
-    form = to_form(guess)
+    url = "http://localhost:4000/api/unfinished_games"
+    {:ok, resp} = Req.get(url)
+    %{"games" => games} = resp.body
 
-    {:ok, assign(socket, resp: lis) |> assign(form: form) |> assign(id: id)}
+    if(Enum.count(games) == 0) do
+      handle_event("save2", %{}, socket)
+    end
+
+    %{"guessed_correctly" => lis, "id" => id, "guessed_wrong"=> guessed_wrong} = games |> Enum.at(0) |> Map.take(["guessed_correctly", "id", "guessed_wrong"])
+    form = to_form(%{"guess" => ""})
+    form2 = to_form(%{})
+
+    {:ok, assign(socket, resp: lis)
+    |> assign(form: form)
+    |> assign(form2: form2)
+    |> assign(id: id)
+    |> assign(games: games)
+    |> assign(guessed_wrong: guessed_wrong)}
   end
 
   def handle_event("save", %{"guess" => guess}, socket) do
@@ -47,14 +30,20 @@ defmodule HangmanWeb.PageLive do
       "guess" => guess
     }
     {:ok, resp} = Req.post(url,json: body)
-    %{
-      "guessed_correctly" => lis,
-      "guessed_wrong" => wrong,
-      "finished" => finished,
-      "correct" => correct
+    %{"game" => %{
+        "finished" => finished,
+        "guessed_correctly" => lis,
+        "guessed_wrong" => guessed_wrong,
+        "id" => _
+        }
       } = resp.body
-    IO.puts(lis)
 
-    {:noreply, assign(socket, resp: lis)}
+    {:noreply, assign(socket, resp: lis, guessed_wrong: guessed_wrong)}
+  end
+
+  def handle_event("save2", %{}, socket) do
+    url = "http://localhost:4000/api/create_game"
+    {:ok, resp} = Req.post(url)
+    {:noreply, push_navigate(socket, to: "/", replace: true)}
   end
 end

@@ -16,21 +16,13 @@ defmodule HangmanWeb.GameJSON do
   end
 
   defp data(%Game{} = game) do
+    guessed_correctly = String.graphemes(game.correct_word) |> Enum.map(fn x -> if Enum.member?(game.guessed_letters,x) do x else "." end end)
+    guessed_wrong = Enum.filter(game.guessed_letters, fn x -> not String.contains?(game.correct_word, x) end)
     %{
       id: game.id,
-      user: game.user,
-      correct_word: game.correct_word,
-      guessed_letters: game.guessed_letters,
+      guessed_correctly: guessed_correctly,
+      guessed_wrong: guessed_wrong,
       finished: game.finished
-    }
-  end
-
-  def response(%{response: res}) do
-    %{
-      guessed_correctly: res.guessed_correctly,
-      guessed_wrong: res.guessed_wrong,
-      correct: res.correct,
-      finished: res.finished
     }
   end
 
