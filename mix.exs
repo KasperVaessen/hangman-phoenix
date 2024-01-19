@@ -50,6 +50,8 @@ defmodule Hangman.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
+      {:req, "~> 0.4.8"},
+      {:poison, "~> 5.0.0"},
       {:plug_cowboy, "~> 2.5"}
     ]
   end

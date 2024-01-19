@@ -39,3 +39,10 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+addEventListener("form", (event) => on_guess(event));
+
+function on_guess(guess) {
+    guess.preventDefault()
+    console.log(guess)
+}
+

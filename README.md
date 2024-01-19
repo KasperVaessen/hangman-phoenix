@@ -16,3 +16,12 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+## Todo
+
+  * Finish basic API
+  * Create simple frontend
+  * Add Users
+  * Add protection to prevent cheating
+  * Beautify frontend
+  * config/refactoring

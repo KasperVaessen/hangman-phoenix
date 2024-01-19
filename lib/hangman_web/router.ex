@@ -17,7 +17,15 @@ defmodule HangmanWeb.Router do
   scope "/", HangmanWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", PageLive
+  end
+
+  scope "/api", HangmanWeb do
+    pipe_through :api
+
+    resources "/games", GameController, except: [:new, :edit]
+    post "/guess", GameController, :make_guess
+    post "/create_game", GameController, :create_game
   end
 
   # Other scopes may use custom stacks.
